@@ -9,3 +9,18 @@ GET http://localhost:8080/employee/salary/max
 
 ### Получение всех сотрудников, зарплата которых больше средней
 GET http://localhost:8080/employee/high-salary
+
+### Возвращает информацию о сотруднике с переданным id
+GET http://localhost:8080/employees/{id}
+
+### Удаляет сотрудника с переданным id
+DELETE http://localhost:8080/employees/{id}
+
+### Создает нового сутрудника
+POST http://localhost:8080/employees/
+
+### Редактирует сотрудника с указанным id
+PUT http://localhost:8080/employees/{id}
+
+### Возвращает всех сотрудников, зарплата которых выше переданного параметра salary
+GET http://localhost:8080/employees/salaryHigherThan
