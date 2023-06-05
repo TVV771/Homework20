@@ -1,4 +1,4 @@
-package ru.skypro.lessons.springboot.weblibraryhw.exception;
+package ru.skypro.lessons.springboot.weblibrary.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

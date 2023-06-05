@@ -1,13 +1,13 @@
-package ru.skypro.lessons.springboot.weblibraryhw.repository;
+package ru.skypro.lessons.springboot.weblibrary.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.skypro.lessons.springboot.weblibraryhw.exception.EmployeeNotFoundException;
-import ru.skypro.lessons.springboot.weblibraryhw.model.Employee;
+import ru.skypro.lessons.springboot.weblibrary.exception.EmployeeNotFoundException;
+import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 
 import java.util.*;
 
 @Repository
-public class EmployeeRepositoryImpl implements ru.skypro.lessons.springboot.weblibraryhw.repository.EmployeeRepository {
+public class EmployeeRepositoryImpl implements EmployeeRepository {
     private final Map<Integer, Employee> employees = new HashMap<>();
 
     {

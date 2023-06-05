@@ -1,4 +1,4 @@
-package ru.skypro.lessons.springboot.weblibraryhw.model;
+package ru.skypro.lessons.springboot.weblibrary.model;
 
 import lombok.*;
 

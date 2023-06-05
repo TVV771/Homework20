@@ -1,7 +1,6 @@
+package ru.skypro.lessons.springboot.weblibrary.repository;
 
-package ru.skypro.lessons.springboot.weblibraryhw.repository;
-
-import ru.skypro.lessons.springboot.weblibraryhw.model.Employee;
+import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 
 import java.util.Collection;
 
