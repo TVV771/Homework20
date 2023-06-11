@@ -1,16 +1,12 @@
-package ru.skypro.lessons.springboot.weblibrary.model;
+package ru.skypro.lessons.springboot.weblibrary.dto;
 
-import lombok.*;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class Employee {
+public class EmployeeDTO {
     private int id;
     private String name;
     private int salary;
+
+
+
 
     public int getId() {
         return id;
@@ -35,4 +31,6 @@ public class Employee {
     public void setSalary(int salary) {
         this.salary = salary;
     }
+
+
 }

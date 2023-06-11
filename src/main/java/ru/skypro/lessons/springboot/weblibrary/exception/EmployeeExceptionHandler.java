@@ -5,26 +5,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class EmployeeExceptionHandler {
-    @ExceptionHandler
-    public ResponseEntity<?> handleIOException(IOException ioException) {
-        String message = "Страница не найдена, проверьте адрес URL";
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler
-    public ResponseEntity<?> handleSQLException(SQLException sqlException) {
-        String message = "Внутренняя ошибка сервера";
-        return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<?> handleException(Exception exception) {
-        String message = "Неверный запрос пользователя";
+    public ResponseEntity<?> handleExceptionNoId(ExceptionNoId exceptionNoId) {
+        String message = "Нет работника под данным id\n";
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler
+    public ResponseEntity<?> handleExceptionNoSuchElementException(NoSuchElementException noSuchElementException) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler
+    public ResponseEntity<?> handleExceptionNoSuchElementException(IllegalArgumentException illegalArgumentException) {
+        String message = "Указан нуливой id\n";
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
 }
