@@ -1,9 +1,11 @@
 package ru.skypro.lessons.springboot.weblibrary.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
-import ru.skypro.lessons.springboot.weblibrary.exception.ExceptionNoId;
+import ru.skypro.lessons.springboot.weblibrary.exceptions.ExceptionNoId;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface EmployeeService {
@@ -48,4 +50,19 @@ public interface EmployeeService {
 
     // метод возвращает список сотрудников с зарплатой выше передаваемого параметра
     List<EmployeeDTO> findBySalaryGreaterThan(int salary);
+
+//    работа с файлами
+
+    /* метод должен принимать на вход файл JSON, содержащий список сотрудников в JSON-формате.
+    Все сотрудники из загружаемого файла должны быть сохранены в базе данных.*/
+    void uploadAndSaveEmployees(MultipartFile file) throws IOException;
+
+    /*метод должен формировать JSON-файл со статистикой по отделам:
+        Название отдела.
+        Количество сотрудников.
+        Максимальная зарплата.
+        Минимальная зарплата.
+        Средняя зарплата.
+        А также сохранять содержимое файла в базу данных. Метод возвращает целочисленный идентификатор сохраненного в базе данных файла.*/
+    void recReport(String deportmentName);
 }

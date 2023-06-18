@@ -4,8 +4,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
+import ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO;
 import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+import ru.skypro.lessons.springboot.weblibrary.pojo.Position;
+import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
 
 import java.util.List;
 
@@ -32,5 +36,16 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer>, P
 
     @Query(value = "select e from Employee e where e.salary = (SELECT MAX(salary) FROM Employee)")
     List<Employee> withHighestSalary();
+
+    List<Employee> findBySalaryGreaterThan(int salary);
+
+    @Query("select p from Position p")
+    List<Position> findAllPositnion();
+
+    @Transactional
+    @Query(value = "select new ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO(p.name, count() , max(e.salary) , min(e.salary) , avg (e.salary)) " +
+            "from Employee e left join e.position p " +
+            "group by p.name")
+    List<ReportDTO> getReport();
 
 }

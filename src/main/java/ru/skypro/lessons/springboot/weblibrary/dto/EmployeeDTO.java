@@ -1,6 +1,8 @@
 package ru.skypro.lessons.springboot.weblibrary.dto;
 
-public class EmployeeDTO {
+import java.io.Serializable;
+
+public class EmployeeDTO implements Serializable {
     private int id;
     private String name;
     private int salary;

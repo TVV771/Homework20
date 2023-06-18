@@ -2,7 +2,12 @@ package ru.skypro.lessons.springboot.weblibrary.service;
 
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
+import ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO;
 import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface EmployeeMapDTO {
     static EmployeeDTO fromEmployee(Employee employee) {
@@ -27,5 +32,32 @@ public interface EmployeeMapDTO {
         employeeFullInfo.setSalary(employee.getSalary());
         employeeFullInfo.setPositionName(employee.getPosition().getName());
         return employeeFullInfo;
+    }
+
+    static List<EmployeeDTO> toEmployeeDTOList(List<Employee> employeeList) {
+        return employeeList
+                .stream()
+                .map(EmployeeMapDTO::fromEmployee)
+                .collect(Collectors.toList());
+    }
+
+    static ReportDTO toRepoptDTO(Report report) {
+        ReportDTO reportDTO = new ReportDTO();
+        reportDTO.setDeportmentName(report.getDeportmentName());
+        reportDTO.setNumberOfEmployees(report.getNumberOfEmployees());
+        reportDTO.setMaxSalary(report.getMaxSalary());
+        reportDTO.setMinSalary(report.getMinSalary());
+        reportDTO.setAverageSalary(report.getAverageSalary());
+        return reportDTO;
+    }
+
+    static Report toRepopt(ReportDTO reportDTO) {
+        Report report = new Report();
+        report.setDeportmentName(reportDTO.getDeportmentName());
+        report.setNumberOfEmployees(reportDTO.getNumberOfEmployees());
+        report.setMaxSalary(reportDTO.getMaxSalary());
+        report.setMinSalary(reportDTO.getMinSalary());
+        report.setAverageSalary(reportDTO.getAverageSalary());
+        return report;
     }
 }
