@@ -43,7 +43,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer>, P
     List<Position> findAllPositnion();
 
     @Transactional
-    @Query(value = "select new ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO(p.name, count() , max(e.salary) , min(e.salary) , avg (e.salary)) " +
+    @Query(value = "select new ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO(p.name, count (*) , max(e.salary) , min(e.salary) , avg (e.salary)) " +
             "from Employee e left join e.position p " +
             "group by p.name")
     List<ReportDTO> getReport();
