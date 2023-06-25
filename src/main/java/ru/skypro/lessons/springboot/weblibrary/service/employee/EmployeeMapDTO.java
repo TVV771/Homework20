@@ -1,10 +1,8 @@
-package ru.skypro.lessons.springboot.weblibrary.service;
+package ru.skypro.lessons.springboot.weblibrary.service.employee;
 
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
-import ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
+import ru.skypro.lessons.springboot.weblibrary.entity.Employee;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,25 +37,5 @@ public interface EmployeeMapDTO {
                 .stream()
                 .map(EmployeeMapDTO::fromEmployee)
                 .collect(Collectors.toList());
-    }
-
-    static ReportDTO toRepoptDTO(Report report) {
-        ReportDTO reportDTO = new ReportDTO();
-        reportDTO.setDeportmentName(report.getDeportmentName());
-        reportDTO.setNumberOfEmployees(report.getNumberOfEmployees());
-        reportDTO.setMaxSalary(report.getMaxSalary());
-        reportDTO.setMinSalary(report.getMinSalary());
-        reportDTO.setAverageSalary(report.getAverageSalary());
-        return reportDTO;
-    }
-
-    static Report toRepopt(ReportDTO reportDTO) {
-        Report report = new Report();
-        report.setDeportmentName(reportDTO.getDeportmentName());
-        report.setNumberOfEmployees(reportDTO.getNumberOfEmployees());
-        report.setMaxSalary(reportDTO.getMaxSalary());
-        report.setMinSalary(reportDTO.getMinSalary());
-        report.setAverageSalary(reportDTO.getAverageSalary());
-        return report;
     }
 }

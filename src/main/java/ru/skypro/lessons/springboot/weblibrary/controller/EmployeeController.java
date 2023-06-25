@@ -6,13 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
 import ru.skypro.lessons.springboot.weblibrary.exception.ExceptionNoId;
-import ru.skypro.lessons.springboot.weblibrary.service.EmployeeService;
+import ru.skypro.lessons.springboot.weblibrary.service.employee.EmployeeService;
 
 import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
 
@@ -22,44 +22,44 @@ public class EmployeeController {
     }
 
     // метод дабавляет сотрудника в базу
-    @PostMapping("employees")
+    @PostMapping
     void addEmployees(@RequestBody EmployeeDTO employee) {
         employeeService.addEmployees(employee);
     }
 
     // метод возвращает полный список сотрудников
-    @GetMapping("employees")
+    @GetMapping
     List<EmployeeDTO> getAllEmployee() {
         return employeeService.getAllEmployee();
     }
 
     // метод для изменения данных сотрудника
-    @PutMapping("employees")
+    @PutMapping
     void editEmployee(@RequestBody EmployeeDTO employeeDTO) throws ExceptionNoId {
         employeeService.editEmployee(employeeDTO);
     }
 
     // возвращает сотрудника по id
-    @GetMapping("employees/{id}")
+    @GetMapping("/{id}")
     EmployeeDTO getEmployeeToId(@PathVariable int id) throws ExceptionNoId {
         return employeeService.getEmployeeToId(id);
     }
 
     // возвращает всех сотрудников с должностями
-    @GetMapping("employees/full_info")
+    @GetMapping("/full_info")
     List<EmployeeFullInfo> getAllEmployeeFullInfo() {
         return employeeService.getAllEmployeeFullInfo();
     }
 
 
     // возвращает сотрудника по id с должностью
-    @GetMapping("employees/full_info/{id}")
+    @GetMapping("/full_info/{id}")
     EmployeeFullInfo getAllEmployeeToIdFullInfo(@PathVariable int id) throws ExceptionNoId {
         return employeeService.getAllEmployeeToIdFullInfo(id);
     }
 
     // метод возвращает список сотрудников по позиции
-    @GetMapping("employees/position/{position}")
+    @GetMapping("/position/{position}")
     List<EmployeeDTO> getEmployeeByPositionName(@PathVariable String position) {
         return employeeService.getEmployeeByPositionName(position);
     }
@@ -71,39 +71,9 @@ public class EmployeeController {
     }
 
     // метод удаляет сотрудника по id
-    @DeleteMapping("employees/{id}")
+    @DeleteMapping("/{id}")
     void deleteEmployeeToId(@PathVariable int id) throws ExceptionNoId {
         employeeService.deleteEmployeeToId(id);
-    }
-
-    // метод возвращает сумму зарплат
-    @GetMapping("/salary/sum")
-    public Integer salarySum() {
-        return employeeService.salarySum();
-    }
-
-    // метод возвращает среднюю зарплату
-    @GetMapping("/salary/avg")
-    public Integer salaryAvg() {
-        return employeeService.salaryAvg();
-    }
-
-    // метод возвращает одного сотрудника с минимальной зарплатой
-    @GetMapping("/salary/min")
-    public EmployeeDTO employeeMinSalary() {
-        return employeeService.employeeMinSalary();
-    }
-
-    // метод возвращает список сотркдников с максимальной зарплатой
-    @GetMapping("/salary/withHighestSalary")
-    public List<EmployeeDTO> withHighestSalary() {
-        return employeeService.withHighestSalary();
-    }
-
-    // метод возвращает список сотрудников с зарплатой выше передаваемого параметра
-    @GetMapping("salary/salaryHigherThan/")
-    List<EmployeeDTO> findBySalaryGreaterThan(@RequestParam("salary") int salary) {
-        return employeeService.findBySalaryGreaterThan(salary);
     }
 
 //    работа с файлами
@@ -111,7 +81,7 @@ public class EmployeeController {
 /* POST-запрос localhost:8080/employees/upload
 Он должен принимать на вход файл JSON, содержащий список сотрудников в JSON-формате. Все сотрудники из загружаемого файла должны быть сохранены в базе данных.*/
 
-    @PostMapping(value = "employees/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void uploadAndSaveEmployees(@RequestParam("file") MultipartFile file) throws IOException {
         employeeService.uploadAndSaveEmployees(file);
     }

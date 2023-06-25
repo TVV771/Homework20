@@ -1,4 +1,4 @@
-package ru.skypro.lessons.springboot.weblibrary.service;
+package ru.skypro.lessons.springboot.weblibrary.service.employee;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
@@ -36,20 +36,7 @@ public interface EmployeeService {
     // метод удаляет сотрудника по id
     void deleteEmployeeToId(int id) throws ExceptionNoId;
 
-    // метод возвращает сумму зарплат
-    Integer salarySum();
 
-    // метод возвращает среднюю зарплату
-    Integer salaryAvg();
-
-    // метод возвращает одного сотрудника с минимальной зарплатой
-    EmployeeDTO employeeMinSalary();
-
-    // метод возвращает список сотркдников с максимальной зарплатой
-    List<EmployeeDTO> withHighestSalary();
-
-    // метод возвращает список сотрудников с зарплатой выше передаваемого параметра
-    List<EmployeeDTO> findBySalaryGreaterThan(int salary);
 
 //    работа с файлами
 
