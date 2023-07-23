@@ -1,88 +1,54 @@
 package ru.skypro.lessons.springboot.weblibrary.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
-import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
-import ru.skypro.lessons.springboot.weblibrary.exception.ExceptionNoId;
-import ru.skypro.lessons.springboot.weblibrary.service.employee.EmployeeService;
+import ru.skypro.lessons.springboot.weblibrary.dto.FullInfo;
+import ru.skypro.lessons.springboot.weblibrary.repository.EmployeeRepository;
+import ru.skypro.lessons.springboot.weblibrary.service.EmployeeService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employees")
+@NoArgsConstructor(force = true)
+
 public class EmployeeController {
-    private final EmployeeService employeeService;
+    public  final EmployeeService employeeService;
 
 
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+
+
+    @GetMapping("/withHighestSalary")
+    public List<EmployeeDTO> withHighestSalary() {
+        return employeeService.withHighestSalary();
     }
 
-    // метод дабавляет сотрудника в базу
-    @PostMapping
-    void addEmployees(@RequestBody EmployeeDTO employee) {
-        employeeService.addEmployees(employee);
-    }
-
-    // метод возвращает полный список сотрудников
     @GetMapping
-    List<EmployeeDTO> getAllEmployee() {
-        return employeeService.getAllEmployee();
+    public List<EmployeeDTO> employeesPosition(@RequestParam("position") Optional position) {
+        if (position == null) {
+            return employeeService.getAllEmployees();
+        } else
+            return employeeService.employeesPosition(position);
     }
 
-    // метод для изменения данных сотрудника
-    @PutMapping
-    void editEmployee(@RequestBody EmployeeDTO employeeDTO) throws ExceptionNoId {
-        employeeService.editEmployee(employeeDTO);
+    @GetMapping("{id}/fullInfo")
+    public List<FullInfo> fullInfo(@PathVariable Integer id) {
+        return employeeService.fullInfo(id);
     }
-
-    // возвращает сотрудника по id
-    @GetMapping("/{id}")
-    EmployeeDTO getEmployeeToId(@PathVariable int id) throws ExceptionNoId {
-        return employeeService.getEmployeeToId(id);
+    @GetMapping( "/page")
+    public List<EmployeeDTO> getEmployeeWithPaging(@RequestParam("page") int page) {
+        return employeeService.getEmployeeWithPaging(page);
     }
+    @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 
-    // возвращает всех сотрудников с должностями
-    @GetMapping("/full_info")
-    List<EmployeeFullInfo> getAllEmployeeFullInfo() {
-        return employeeService.getAllEmployeeFullInfo();
-    }
+    public  void upload(@RequestParam("file") MultipartFile file) throws IOException {
+        employeeService.upload(file); }
 
-
-    // возвращает сотрудника по id с должностью
-    @GetMapping("/full_info/{id}")
-    EmployeeFullInfo getAllEmployeeToIdFullInfo(@PathVariable int id) throws ExceptionNoId {
-        return employeeService.getAllEmployeeToIdFullInfo(id);
-    }
-
-    // метод возвращает список сотрудников по позиции
-    @GetMapping("/position/{position}")
-    List<EmployeeDTO> getEmployeeByPositionName(@PathVariable String position) {
-        return employeeService.getEmployeeByPositionName(position);
-    }
-
-    // метод возвращает информацию о сотрудниках, основываясь на номере страницы.
-    @GetMapping("page/{page}")
-    List<EmployeeDTO> getEmployeeFromPage(@PathVariable int page) {
-        return employeeService.getEmployeeFromPage(page);
-    }
-
-    // метод удаляет сотрудника по id
-    @DeleteMapping("/{id}")
-    void deleteEmployeeToId(@PathVariable int id) throws ExceptionNoId {
-        employeeService.deleteEmployeeToId(id);
-    }
-
-//    работа с файлами
-
-/* POST-запрос localhost:8080/employees/upload
-Он должен принимать на вход файл JSON, содержащий список сотрудников в JSON-формате. Все сотрудники из загружаемого файла должны быть сохранены в базе данных.*/
-
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    void uploadAndSaveEmployees(@RequestParam("file") MultipartFile file) throws IOException {
-        employeeService.uploadAndSaveEmployees(file);
-    }
 }

@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: one
+      author: Tarabrin
+      changes:
+        - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: salary
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_position
+                  type: int
+                  constraints:
+                    foreignKeyName: position
+              - column:
+                  name: id_report
+                  type: int
+                  constraints:
+                    foreignKeyName: report

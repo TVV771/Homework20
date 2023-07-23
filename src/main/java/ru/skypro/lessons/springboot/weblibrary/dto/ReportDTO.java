@@ -1,62 +1,40 @@
 package ru.skypro.lessons.springboot.weblibrary.dto;
 
+import lombok.*;
+import ru.skypro.lessons.springboot.weblibrary.pojo.Position;
+import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
+import ru.skypro.lessons.springboot.weblibrary.repository.ReportRepository;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@ToString
+@Builder(toBuilder = true)
 
 public class ReportDTO {
-    private int id;
-    String deportmentName;
-    int numberOfEmployees;
-    int maxSalary;
-    int minSalary;
-    int averageSalary;
+    public ReportRepository reportRepository;
 
-    public ReportDTO(String deportmentName, int numberOfEmployees, int maxSalary, int minSalary, int averageSalary) {
-        this.deportmentName = deportmentName;
-        this.numberOfEmployees = numberOfEmployees;
-        this.maxSalary = maxSalary;
-        this.minSalary = minSalary;
-        this.averageSalary = averageSalary;
+    private Integer id;
+    private Position name;
+    private String name1;
+    private int countEmployee;
+    private int maxSalary;
+    private int minSalary;
+    private int avgSalary;
+    private EmployeeDTO employeeDTO;
+
+    public ReportDTO(Report report) {
     }
 
-    public ReportDTO() {
+    public static ReportDTO fromReport(Report report) {
+        ReportDTO reportDTO = new ReportDTO(report);
+        reportDTO.setId(report.getId());
+        reportDTO.setName1(report.getFilePath());
+        reportDTO.getCountEmployee();
+        reportDTO.getMaxSalary();
+        reportDTO.getMinSalary();
+        reportDTO.getAvgSalary();
+        return reportDTO;
     }
 
-    public String getDeportmentName() {
-        return deportmentName;
-    }
-
-    public void setDeportmentName(String deportmentName) {
-        this.deportmentName = deportmentName;
-    }
-
-    public int getNumberOfEmployees() {
-        return numberOfEmployees;
-    }
-
-    public void setNumberOfEmployees(int numberOfEmployees) {
-        this.numberOfEmployees = numberOfEmployees;
-    }
-
-    public int getMaxSalary() {
-        return maxSalary;
-    }
-
-    public void setMaxSalary(int maxSalary) {
-        this.maxSalary = maxSalary;
-    }
-
-    public int getMinSalary() {
-        return minSalary;
-    }
-
-    public void setMinSalary(int minSalary) {
-        this.minSalary = minSalary;
-    }
-
-    public int getAverageSalary() {
-        return averageSalary;
-    }
-
-    public void setAverageSalary(int averageSalary) {
-        this.averageSalary = averageSalary;
-    }
 }
