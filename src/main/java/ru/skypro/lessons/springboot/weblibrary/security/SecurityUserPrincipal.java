@@ -1,44 +1,34 @@
 package ru.skypro.lessons.springboot.weblibrary.security;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-@Data
 @AllArgsConstructor
-@NoArgsConstructor
-@Component
 public class SecurityUserPrincipal implements UserDetails {
-    private String userName;
-    private String password;
-    private List<SecurityGrandAth> securityGrandAthList;
+    private AuthUserDTO authUserDTO;
 
-    public SecurityUserPrincipal(AuthUser user) {
-        this.userName = user.getUsername();
-        this.password =  user.getPassword();
-        this.securityGrandAthList = user.getAuthorityList().stream()
-                .map(SecurityGrandAth::new)
-                .toList();
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>(securityGrandAthList);
+        return Optional.ofNullable(authUserDTO)
+                .map(AuthUserDTO::getRoleName)
+                .map(roleName -> "ROLE_" + roleName)
+                .map(SimpleGrantedAuthority::new)
+                .map(List::of)
+                .orElse(Collections.emptyList());
     }
+
     @Override
     public String getPassword() {
-        return password;
+        return authUserDTO.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userName;
+        return authUserDTO.getUserName();
     }
 
     @Override

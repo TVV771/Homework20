@@ -1,29 +1,25 @@
 package ru.skypro.lessons.springboot.weblibrary.security;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
-
-@Data
 @Entity
 @Table(name = "auth_user")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class AuthUser {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(nullable = false, unique = true)
-    private String username;
-
+    private Long id;
+    @Column(name = "username", nullable = false, unique = true)
+    private String userName;
     private String password;
-    private boolean enabled;
-
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_role")
-    private List <Authority> authorityList;
+    @Column(name = "role_name")
+    @Enumerated(EnumType.STRING)
+    private RoleType roleName;
 }

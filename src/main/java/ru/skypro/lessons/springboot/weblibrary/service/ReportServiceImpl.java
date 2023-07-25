@@ -1,73 +1,55 @@
 package ru.skypro.lessons.springboot.weblibrary.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.PathResource;
+import org.springframework.core.io.Resource;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
+import ru.skypro.lessons.springboot.weblibrary.model.Report;
 import ru.skypro.lessons.springboot.weblibrary.repository.ReportRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-@EqualsAndHashCode
-@NoArgsConstructor
-@ToString
-@Data
 @Service
-@Profile("!test")
-public class  ReportServiceImpl implements ReportService {
-    @Autowired
-    public ReportRepository reportRepository;
-    ObjectMapper objectMapper = new ObjectMapper();
-    Logger logger = LoggerFactory.getLogger(ReportServiceImpl.class);
-    @Value("${app.env}")
-    private String dev;
+@AllArgsConstructor
+public class ReportServiceImpl implements ReportService {
+    private final ReportRepository reportRepository;
+
     @Override
-    public int createReport() throws IOException {
-        logger.info("Was invoked method for createReport");
-        List<ReportDTO> reportDTOS = reportRepository.createReport();
-        String json = objectMapper.writeValueAsString(reportDTOS);
-        String pathJson = saveReportToFile(json);
+    public Integer createReport() throws IOException {
+        String fileName = "report.json";
+        String json = String.valueOf(reportRepository.createReport());
+        Path path = Paths.get(fileName);
+        try {
+            Files.writeString(path, json);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
         Report report = new Report();
-        report.setFilePath(pathJson);
+        report.setFilePath(String.valueOf(path.toAbsolutePath()));
         reportRepository.save(report);
         return report.getId();
-
-
     }
 
     @Override
-    public ResponseEntity<Report> upload(int id) {
-        logger.info("Was invoked method for upload{}",id);
-        ResponseEntity<Report> report = reportRepository.readReportById(id);
-        return report;
+    public ResponseEntity<Resource> getReportById(Integer id) throws IOException {
+        String file = "report.json";
+        String path = reportRepository.findById(id)
+                .map(ReportDTO::fromReport)
+                .orElseThrow(IOException::new)
+                .getFilePath();
+        File newFile = new File(path);
+        Resource resource = new PathResource(newFile.getPath());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(resource);
     }
-
-    @Override
-    public String saveReportToFile(String reportJson) {
-        logger.info("Was invoked method for saveReportToFile{}",reportJson);
-        String fileName = "report-" + System.currentTimeMillis() + ".json";
-        try {
-            Path filePath = Paths.get(fileName);
-            Files.write(filePath, reportJson.getBytes());
-            return filePath.toString();
-        } catch (IOException e) {
-            logger.error("Failed to save report to file",reportJson,e);
-            throw new RuntimeException("Failed to save report to file", e);
-        }
-    }
-
 }

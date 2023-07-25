@@ -1,40 +1,48 @@
 package ru.skypro.lessons.springboot.weblibrary.dto;
 
-import lombok.*;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Position;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
-import ru.skypro.lessons.springboot.weblibrary.repository.ReportRepository;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.skypro.lessons.springboot.weblibrary.model.Report;
 
-@AllArgsConstructor
+import java.io.Serializable;
+
 @NoArgsConstructor
-@Data
-@ToString
-@Builder(toBuilder = true)
-
-public class ReportDTO {
-    public ReportRepository reportRepository;
-
+@Getter
+@Setter
+@EqualsAndHashCode
+public class ReportDTO implements Serializable {
     private Integer id;
-    private Position name;
-    private String name1;
-    private int countEmployee;
-    private int maxSalary;
+    private String filePath;
+    private String positionName;
+    private Long count;
     private int minSalary;
-    private int avgSalary;
-    private EmployeeDTO employeeDTO;
+    private int maxSalary;
+    private double avgSalary;
 
-    public ReportDTO(Report report) {
+    public ReportDTO(String positionName, Long count, int minSalary, int maxSalary, double avgSalary) {
+        this.positionName = positionName;
+        this.count = count;
+        this.minSalary = minSalary;
+        this.maxSalary = maxSalary;
+        this.avgSalary = avgSalary;
     }
 
     public static ReportDTO fromReport(Report report) {
-        ReportDTO reportDTO = new ReportDTO(report);
+        ReportDTO reportDTO = new ReportDTO();
         reportDTO.setId(report.getId());
-        reportDTO.setName1(report.getFilePath());
-        reportDTO.getCountEmployee();
-        reportDTO.getMaxSalary();
-        reportDTO.getMinSalary();
-        reportDTO.getAvgSalary();
+        reportDTO.setFilePath(report.getFilePath());
         return reportDTO;
     }
 
+    @Override
+    public String toString() {
+        return "Отчет по отделам \n" +
+                "Название отдела " + positionName + '\n' +
+                "Количество сотрудников " + count + '\n' +
+                "Минимальная зарплата по отделу " + minSalary + '\n' +
+                "Максимальная зарплата по отделу " + maxSalary + '\n' +
+                "Средняя зарплата " + avgSalary + '\n';
+    }
 }

@@ -2,35 +2,40 @@ package ru.skypro.lessons.springboot.weblibrary.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
-import ru.skypro.lessons.springboot.weblibrary.dto.FullInfo;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
+import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 public interface EmployeeService {
-    public void addEmployee(Employee employee);
-    public  List<EmployeeDTO> getAllEmployees();
+    Collection<EmployeeFullInfo> getAllEmployees();
 
-    public List<EmployeeDTO> withHighestSalary();
-    public List<EmployeeDTO> employeesPosition(Optional position);
-    public List<FullInfo> fullInfo(int id);
-    public List<EmployeeDTO> getEmployeeWithPaging(int pageIndex);
-    public void upload(MultipartFile file) throws IOException;
+    void createEmployee(EmployeeDTO employeeDTO);
 
-//    List<Employee> getAllEmployee();
+    Employee getEmployeeById(Integer id);
 
-//    public List<Employee> showEmployee();
-//
-//    public Employee createEmployee(int id, String name, int salary, Position position);
-//
-//    public void editEmployee(int id);
-//    public List<Employee> getEmployee(int id);
-//    public void deliteEmployee(int id);
-//    public List<Employee> getEmployeeSalaryHigher(int salary);
-//    public int sumSalary();
-//    public int minSalary();
-//    public int maxSalary();
-//    public List<Employee> highSalary();
+    void updateEmployeeById(Integer id, EmployeeDTO employeeDTO);
+
+    void deleteEmployeeById(Integer id);
+
+    Integer getSalarySum();
+
+    EmployeeFullInfo getSalaryMin();
+
+    EmployeeFullInfo getSalaryMax();
+
+    Collection<EmployeeFullInfo> getSalaryAboveAverageEmployees();
+
+    Collection<EmployeeFullInfo> getEmployeesByParamSalary(int paramSalary);
+
+    EmployeeFullInfo getEmployeeByIdFullInfo(Integer id);
+
+    Collection<EmployeeFullInfo> getEmployeesByPosition(Integer position);
+
+    Collection<EmployeeFullInfo> getEmployeesWithHighestSalary();
+
+    Collection<EmployeeDTO> getEmployeeWithPage(Integer page);
+
+    void createEmployeeFromFile(MultipartFile file) throws IOException;
 }

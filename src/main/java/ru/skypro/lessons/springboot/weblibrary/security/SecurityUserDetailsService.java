@@ -1,28 +1,22 @@
 package ru.skypro.lessons.springboot.weblibrary.security;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.skypro.lessons.springboot.weblibrary.repository.UserRepository;
 
 @Service
-@Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class SecurityUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AuthUser user = userRepository.findByUsername(username);
-        if(user ==null)
-        {
-            throw new UsernameNotFoundException(username);
+    public UserDetails loadUserByUsername(String userName) {
+        AuthUserDTO authUserDTO = AuthUserDTO.fromAuthUser(userRepository.findByUserName(userName));
+        if (authUserDTO == null) {
+            throw new UsernameNotFoundException(userName);
         }
-        return new  SecurityUserPrincipal(user);
-
+        return new SecurityUserPrincipal(authUserDTO);
     }
 }

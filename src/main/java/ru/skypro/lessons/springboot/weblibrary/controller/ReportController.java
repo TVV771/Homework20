@@ -1,29 +1,35 @@
 package ru.skypro.lessons.springboot.weblibrary.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.lessons.springboot.weblibrary.dto.ReportDTO;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Report;
+import ru.skypro.lessons.springboot.weblibrary.service.EmployeeService;
 import ru.skypro.lessons.springboot.weblibrary.service.ReportService;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
-@RequestMapping("report")
-@NoArgsConstructor(force = true)
+@RequestMapping("/report")
+@RequiredArgsConstructor
 public class ReportController {
-    public final ReportService  reportService;
+    private final ReportService reportService;
+    Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
+    @PostMapping(value = "/")
+    public Integer createReport() throws IOException {
+        logger.info("Was invoked method for create report ");
+        logger.debug("Create report");
+        return reportService.createReport();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportById(@PathVariable int id) {
-        return reportService.upload(id);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Resource> getReportById(@PathVariable Integer id) throws IOException {
+        logger.debug("Get report by id {} ", id);
+        logger.info("Was invoked method get report by id {} ", id);
+        logger.error("There is no report by id {} ", id);
+        return reportService.getReportById(id);
     }
-
 }

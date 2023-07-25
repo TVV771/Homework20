@@ -1,44 +1,37 @@
 package ru.skypro.lessons.springboot.weblibrary.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+import org.springframework.stereotype.Repository;
+import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
+import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
+@Repository
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
-public interface EmployeeRepository extends CrudRepository<Employee,Integer>,
-        PagingAndSortingRepository<Employee, Integer> {
-    @Query(value = "SELECT e FROM Employee e")
-    List<Employee> findAllEmployees();
-
-
-    @Query(value = "select * from employee order by salary desc ",
-            nativeQuery = true)
-    List<Employee> withHighestSalary();
-    @Query(value = "SELECT * FROM employee WHERE name= :name",
-            nativeQuery = true)
-    List<Employee> getEmployeesByName(@Param("name") Optional position  );
-
-
-
-    @Query(value = "SELECT new ru.skypro.lessons.springboot.weblibrary1. " +
-            "FullInfo(e.name , e.salary , p.position) " +
+    @Query("SELECT new ru.skypro.lessons.springboot.weblibrary.dto." +
+            "EmployeeFullInfo(e.name , e.salary , p.name) " +
             "FROM Employee e join fetch Position p " +
-            "WHERE  id = :id",
-            nativeQuery = true)
-    List<Employee> getEmployeesFullInfo(@Param("id") int id);
+            "WHERE e.position = p")
+    Collection<EmployeeFullInfo> findAllEmployeeFullInfo();
 
-    @Query(value = "SELECT e.name FROM Employee e")
-    String getEmployeeByName();
+    @Query("SELECT new ru.skypro.lessons.springboot.weblibrary.dto." +
+            "EmployeeFullInfo(e.name , e.salary , p.name) " +
+            "FROM Employee e join fetch Position p " +
+            "WHERE e.position = p AND e.id=?1")
+    Optional<EmployeeFullInfo> findByIdFullInfo(Integer id);
 
-    @Query(value = "SELECT max(e.salary) from Employee e")
-    int getMaxSalary();
-    @Query(value = "SELECT min (e.salary) from Employee e")
-    int getMinSalary();
-    @Query(value = "SELECT avg(e.salary) from Employee e")
-    int getAvgSalary();
+    @Query("SELECT new ru.skypro.lessons.springboot.weblibrary.dto." +
+            "EmployeeFullInfo(e.name , e.salary , p.name) " +
+            "FROM Employee e join fetch Position p " +
+            "WHERE e.position = p AND p.id=?1")
+    Collection<EmployeeFullInfo> findEmployeeByPosition(Integer position);
 
+    @Query("SELECT new ru.skypro.lessons.springboot.weblibrary.dto." +
+            "EmployeeFullInfo(e.name, e.salary, p.name) " +
+            "FROM Employee e join fetch Position p " +
+            "WHERE e.position = p AND e.salary = (SELECT MAX(e2.salary) FROM Employee e2)")
+    Collection<EmployeeFullInfo> findEmployeeWithHighestSalary();
 }

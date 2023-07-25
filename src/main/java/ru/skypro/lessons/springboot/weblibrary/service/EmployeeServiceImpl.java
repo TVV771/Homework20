@@ -1,107 +1,132 @@
 package ru.skypro.lessons.springboot.weblibrary.service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
-import ru.skypro.lessons.springboot.weblibrary.dto.FullInfo;
-import ru.skypro.lessons.springboot.weblibrary.pojo.Employee;
+import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
+import ru.skypro.lessons.springboot.weblibrary.exception.EmployeeNotFoundException;
+import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 import ru.skypro.lessons.springboot.weblibrary.repository.EmployeeRepository;
+import ru.skypro.lessons.springboot.weblibrary.repository.PagingAndSortingRepository;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@EqualsAndHashCode
-@ToString
-@Data
 @Service
-@Profile("test")
-@NoArgsConstructor
-public class EmployeeServiceImpl implements EmployeeService{
-    @Autowired
-    public EmployeeRepository employeeRepository;
-    ObjectMapper objectMapper = new ObjectMapper();
-    Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
-    @Value("${app.env}")
-    private String test;
+@AllArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+    private final EmployeeRepository employeeRepository;
+    private final PagingAndSortingRepository pagingAndSortingRepository;
 
-
-    @Override
-    public void addEmployee(Employee employee) {
-
+    public Collection<EmployeeFullInfo> getAllEmployees() {
+        return employeeRepository.findAllEmployeeFullInfo();
     }
 
     @Override
-    public List<EmployeeDTO> getAllEmployees() {
-        logger.info("Was invoked method for getAllEmployees");
-        return employeeRepository.findAllEmployees().stream()
+    public Integer getSalarySum() {
+        return getAllEmployees().stream()
+                .mapToInt(employee -> IntStream.of(employee.getSalary()).sum())
+                .sum();
+    }
+
+    @Override
+    public EmployeeFullInfo getSalaryMin() {
+        return getAllEmployees().stream()
+                .min(Comparator.comparingInt(EmployeeFullInfo::getSalary))
+                .orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    @Override
+    public EmployeeFullInfo getSalaryMax() {
+        return getAllEmployees().stream()
+                .max(Comparator.comparingInt(EmployeeFullInfo::getSalary))
+                .orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    @Override
+    public Collection<EmployeeFullInfo> getSalaryAboveAverageEmployees() {
+        double salaryAverage = getAllEmployees().stream()
+                .mapToInt(EmployeeFullInfo::getSalary).average().getAsDouble();
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary() > salaryAverage)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<EmployeeFullInfo> getEmployeesByParamSalary(int paramSalary) {
+        return getAllEmployees().stream()
+                .filter(employee -> employee.getSalary() > paramSalary)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeFullInfo getEmployeeByIdFullInfo(Integer id) {
+        return employeeRepository.findByIdFullInfo(id).orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    @Override
+    public Collection<EmployeeFullInfo> getEmployeesByPosition(Integer position) {
+        if (position != null) {
+            return employeeRepository.findEmployeeByPosition(position);
+        } else
+            return getAllEmployees();
+    }
+
+    @Override
+    public Collection<EmployeeFullInfo> getEmployeesWithHighestSalary() {
+        return employeeRepository.findEmployeeWithHighestSalary();
+    }
+
+    @Override
+    public Collection<EmployeeDTO> getEmployeeWithPage(Integer page) {
+        Page<Employee> employeePage = pagingAndSortingRepository.findAll(PageRequest.of(page, 10));
+        Collection<Employee> employeeList = employeePage.stream()
+                .toList();
+        return employeeList.stream()
                 .map(EmployeeDTO::fromEmployee)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<EmployeeDTO> withHighestSalary() {
-        logger.info("Was invoked method for withHighestSalary");
-        return employeeRepository.withHighestSalary().stream()
-                .map(EmployeeDTO::fromEmployee)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<EmployeeDTO> employeesPosition(Optional position) {
-        logger.info("Was invoked method for create employee:{} ",position);
-        return employeeRepository.getEmployeesByName(position).stream()
-                .map(EmployeeDTO::fromEmployee)
-                .collect(Collectors.toList());
-
-    }
-
-    @Override
-    public List<FullInfo> fullInfo(int id) {
-        logger.info("Was invoked method for create employee:{} ",id);
-        return employeeRepository.getEmployeesFullInfo(id).stream()
-                .map(FullInfo::fromEmployeeFullInfo)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<EmployeeDTO> getEmployeeWithPaging(int pageIndex) {
-        try {
-            if (pageIndex != 0) {
-                logger.info("Was invoked method for create employee:{} ", pageIndex);
-                PageRequest employeePage = PageRequest.of(pageIndex, 10);
-                Page<Employee> employeeDTOS = employeeRepository.findAll(employeePage);
-                return employeeDTOS.stream()
-                        .map(EmployeeDTO::fromEmployee).
-                        collect(Collectors.toList());
-            }
-        } catch (Exception e) {
-            logger.error("the value was entered incorrectly:{}", pageIndex,e);
-            throw new RuntimeException(e);
-        }return null;
-    }
-
-    @Override
-    public void upload(MultipartFile multipartFile) throws IOException {
-        logger.info("Was invoked method for create employee:{} ",multipartFile);
-        File file = new File("new.json");
-        Files.write(file.toPath(), multipartFile.getBytes());
+    public void createEmployeeFromFile(MultipartFile file) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        Employee employee = objectMapper.readValue(file, Employee.class);
-        employeeRepository.save(employee);
+        EmployeeDTO[] newEmployees = objectMapper.readValue(file.getBytes(), EmployeeDTO[].class);
+        for (EmployeeDTO e : newEmployees) {
+            createEmployee(e);
+        }
     }
 
+    @Override
+    public void createEmployee(EmployeeDTO employeeDTO) {
+        employeeRepository.save(employeeDTO.toEmployee());
+    }
+
+    @Override
+    public void updateEmployeeById(Integer id, EmployeeDTO employeeDTO) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(EmployeeNotFoundException::new);
+        employeeDTO.setId(employee.getId());
+        employeeRepository.save(employeeDTO.toEmployee());
+    }
+
+    @Override
+    public Employee getEmployeeById(Integer id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    @Override
+    public void deleteEmployeeById(Integer id) {
+        if (id > getAllEmployees().size() || id <= 0) {
+            throw new EmployeeNotFoundException();
+        }
+        employeeRepository.deleteById(id);
+    }
 }
