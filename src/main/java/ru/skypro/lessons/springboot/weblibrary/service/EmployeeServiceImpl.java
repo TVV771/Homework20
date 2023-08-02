@@ -14,8 +14,7 @@ import ru.skypro.lessons.springboot.weblibrary.repository.EmployeeRepository;
 import ru.skypro.lessons.springboot.weblibrary.repository.PagingAndSortingRepository;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -117,9 +116,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getEmployeeById(Integer id) {
-        return employeeRepository.findById(id)
+    public EmployeeDTO getEmployeeById(Integer id) {
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(EmployeeNotFoundException::new);
+        return EmployeeDTO.fromEmployee(employee);
     }
 
     @Override

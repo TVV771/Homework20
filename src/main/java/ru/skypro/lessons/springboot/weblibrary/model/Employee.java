@@ -17,7 +17,11 @@ public class Employee {
     private Integer id;
     private String name;
     private int salary;
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "position_id")
     private Position position;
+
+    public Employee(String name) {
+        this.name = name;
+    }
 }

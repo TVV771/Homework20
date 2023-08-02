@@ -3,7 +3,6 @@ package ru.skypro.lessons.springboot.weblibrary.service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeDTO;
 import ru.skypro.lessons.springboot.weblibrary.dto.EmployeeFullInfo;
-import ru.skypro.lessons.springboot.weblibrary.model.Employee;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -13,7 +12,7 @@ public interface EmployeeService {
 
     void createEmployee(EmployeeDTO employeeDTO);
 
-    Employee getEmployeeById(Integer id);
+    EmployeeDTO getEmployeeById(Integer id);
 
     void updateEmployeeById(Integer id, EmployeeDTO employeeDTO);
 

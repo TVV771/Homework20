@@ -22,9 +22,7 @@ import ru.skypro.lessons.springboot.weblibrary.repository.PagingAndSortingReposi
 import ru.skypro.lessons.springboot.weblibrary.service.EmployeeServiceImpl;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -61,8 +59,8 @@ public class EmployeeServiceImplTest {
     @Test
     public void updateEmployeeByIdIsIdUpdateEmployee() {
         when(employeeRepositoryMock.findById(anyInt()))
-                .thenReturn(Optional.of(EMPLOYEE_1));
-        assertEquals(EMPLOYEE_1, out.getEmployeeById(1));
+                .thenReturn(Optional.of(EMPLOYEE_DTO_1.toEmployee()));
+        assertEquals(EMPLOYEE_DTO_1, out.getEmployeeById(1));
         out.updateEmployeeById(1, EMPLOYEE_DTO_1);
         verify(employeeRepositoryMock, times(1)).save(EMPLOYEE_DTO_1.toEmployee());
     }
@@ -70,8 +68,8 @@ public class EmployeeServiceImplTest {
     @Test
     public void getEmployeeByIdIsIdReturnEmployee() {
         when(employeeRepositoryMock.findById(anyInt()))
-                .thenReturn(Optional.of(EMPLOYEE_1));
-        assertEquals(EMPLOYEE_1, out.getEmployeeById(1));
+                .thenReturn(Optional.of(EMPLOYEE_DTO_1.toEmployee()));
+        assertEquals(EMPLOYEE_DTO_1, out.getEmployeeById(1));
         verify(employeeRepositoryMock, times(1)).findById(anyInt());
     }
 
@@ -96,7 +94,7 @@ public class EmployeeServiceImplTest {
         Integer testSalarySum = EMPLOYEE_LIST.stream()
                 .mapToInt(employee -> IntStream.of(employee.getSalary()).sum())
                 .sum();
-        Integer actualSalarySum = 15000 + 25000 + 30000;
+        Integer actualSalarySum = 25000 + 35000 + 40000;
         assertEquals(testSalarySum, actualSalarySum);
     }
 
@@ -131,7 +129,7 @@ public class EmployeeServiceImplTest {
 
     @Test
     public void getEmployeesByParamSalaryTestParamReturnListEmployees() {
-        int testParam = 15000;
+        int testParam = 26000;
         List<Employee> testEmployeesList = EMPLOYEE_LIST.stream()
                 .filter(employee -> employee.getSalary() > testParam)
                 .collect(Collectors.toList());
@@ -184,9 +182,9 @@ public class EmployeeServiceImplTest {
                 1,
                 "Nata",
                 25000,
-                new Position(2, "java"));
+                new Position(2, "Разработчик"));
         Employee employeeEmpty = new Employee();
-        Employee employeeDefault = new Employee(1, "по умолчанию", 0, null);
+        Employee employeeDefault = new Employee(1, "по умолчанию", 0, new Position());
         return Stream.of(
                 Arguments.of(employeeCorrect, "Корректный сотрудник"),
                 Arguments.of(employeeEmpty, "Поля сотрудника не заполнены"),
