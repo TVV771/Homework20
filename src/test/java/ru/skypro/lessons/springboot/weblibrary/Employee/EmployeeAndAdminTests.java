@@ -267,10 +267,10 @@ public class EmployeeAndAdminTests {
 
         mockMvc.perform(get("/employee/salaryHigherThan")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("paramSalary", String.valueOf(36000)))
+                        .param("paramSalary", String.valueOf(26000)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(0))
+                .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("name3"));
     }
 

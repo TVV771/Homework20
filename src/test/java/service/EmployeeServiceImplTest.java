@@ -94,7 +94,7 @@ public class EmployeeServiceImplTest {
         Integer testSalarySum = EMPLOYEE_LIST.stream()
                 .mapToInt(employee -> IntStream.of(employee.getSalary()).sum())
                 .sum();
-        Integer actualSalarySum = 25000 + 35000 + 40000;
+        Integer actualSalarySum = 15000 + 25000 + 30000;
         assertEquals(testSalarySum, actualSalarySum);
     }
 
@@ -129,7 +129,7 @@ public class EmployeeServiceImplTest {
 
     @Test
     public void getEmployeesByParamSalaryTestParamReturnListEmployees() {
-        int testParam = 26000;
+        int testParam = 16000;
         List<Employee> testEmployeesList = EMPLOYEE_LIST.stream()
                 .filter(employee -> employee.getSalary() > testParam)
                 .collect(Collectors.toList());
