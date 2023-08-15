@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: liquibaseTest/changesetsTest/26072023_create_employee1_test.yml
+  - include:
+      file: liquibaseTest/changesetsTest/26072023_create_position_test.yml
+  - include:
+      file: liquibaseTest/changesetsTest/26072023_create_report_test.yml
+  - include:
+      file: liquibaseTest/changesetsTest/26072023_create_authUser_test.yml

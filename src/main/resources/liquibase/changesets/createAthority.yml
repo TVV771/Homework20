@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: one
+      author: Tarabrin
+      changes:
+        - createTable:
+            tableName: role1
+            columns:
+              - column:
+                  name: id_role
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
