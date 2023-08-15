@@ -22,6 +22,9 @@ import ru.skypro.lessons.springboot.weblibrary.repository.PagingAndSortingReposi
 import ru.skypro.lessons.springboot.weblibrary.service.EmployeeServiceImpl;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -94,7 +97,7 @@ public class EmployeeServiceImplTest {
         Integer testSalarySum = EMPLOYEE_LIST.stream()
                 .mapToInt(employee -> IntStream.of(employee.getSalary()).sum())
                 .sum();
-        Integer actualSalarySum = 15000 + 25000 + 30000;
+        Integer actualSalarySum = 25000 + 35000 + 40000;
         assertEquals(testSalarySum, actualSalarySum);
     }
 
@@ -129,7 +132,7 @@ public class EmployeeServiceImplTest {
 
     @Test
     public void getEmployeesByParamSalaryTestParamReturnListEmployees() {
-        int testParam = 16000;
+        int testParam = 26000;
         List<Employee> testEmployeesList = EMPLOYEE_LIST.stream()
                 .filter(employee -> employee.getSalary() > testParam)
                 .collect(Collectors.toList());
@@ -157,24 +160,14 @@ public class EmployeeServiceImplTest {
 
     @Test
     public void createEmployeeFromFileNewFileCreateEmployee() throws IOException {
-        String json = "[\n" +
-                "  {\n" +
-                "    \"id\": 10,\n" +
-                "    \"name\": \"Владимир\",\n" +
-                "    \"salary\": 105000,\n" +
-                "    \"position\": {\n" +
-                "      \"id\": 1,\n" +
-                "      \"name\": \"Джава\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
+        Path path = Paths.get("employee.json");
         MockMultipartFile file = new MockMultipartFile(
-                "employee",
+                "file",
                 "employee.json",
                 MediaType.MULTIPART_FORM_DATA_VALUE,
-                json.getBytes());
+                Files.readAllBytes(path));
         out.createEmployeeFromFile(file);
-        verify(employeeRepositoryMock, times(1)).save(any(Employee.class));
+        verify(employeeRepositoryMock, times(2)).save(any(Employee.class));
     }
 
     public static Stream<Arguments> provideParamsForTests() {
