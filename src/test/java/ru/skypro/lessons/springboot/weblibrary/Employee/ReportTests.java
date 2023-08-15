@@ -9,12 +9,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.skypro.lessons.springboot.weblibrary.repository.ReportRepository;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import static constants.ReportConstants.REPORT;
 import static constants.ReportConstants.REPORT_DTO_LIST;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,17 +34,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @Testcontainers
 public class ReportTests {
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withUsername("postgres")
+            .withPassword("postgres");
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ReportRepository reportRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private DataSource dataSource;
+
     @BeforeEach
     void cleanReportTable() {
         reportRepository.deleteAll();
     }
-
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+    @Test
+    void testPostgresql() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            assertThat(conn).isNotNull();
+        }
+    }
 
     @Test
     public void createReport_whenIdReturn_NewReportId() throws Exception {
