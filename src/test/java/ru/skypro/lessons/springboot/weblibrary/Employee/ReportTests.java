@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+
 public class ReportTests {
     @Autowired
     MockMvc mockMvc;
@@ -29,12 +30,10 @@ public class ReportTests {
     ReportRepository reportRepository;
     @Autowired
     private ObjectMapper objectMapper;
-
     @BeforeEach
     void cleanReportTable() {
         reportRepository.deleteAll();
     }
-
     @Test
     public void createReport_whenIdReturn_NewReportId() throws Exception {
         String report = objectMapper.writeValueAsString(REPORT_DTO_LIST);
